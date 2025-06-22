@@ -7,6 +7,23 @@ class Board
 public:
     Peace board[8][8];
 };
+
+void print_board(const Board& board)
+{
+    cout << "\tA\tB\tC\tD\tE\tF\tG\tH" << endl;
+    for (int j = 7; j > -1; --j)
+    {
+        cout << endl;
+        cout << j + 1;
+        for (int i = 0; i < 8; ++i)
+        {
+            cout << '\t';
+            board.board[i][j].print();
+        }
+        cout << endl;
+    }
+}
+
 /*
     0   1   2   3   4   5   6   7
 

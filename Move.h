@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include <functional>
 #include <vector>
 #include "Peace.h"
@@ -44,8 +45,6 @@ bool check_move_for_pawn(const Board &now_board, const pair < int , int > &now_p
     {
         if (next_position.second - now_position.second == 2 * add)
             return false;
-        if (now_board.board[next_position.first][next_position.second].color != now_board.board[now_position.first][now_position.second].color)
-            return true;
         if (now_board.board[next_position.first][next_position.second].is_empty){
             Peace pe = now_board.board[next_position.first][next_position.second - 1 * add];
             if (pe.is_pawn && pe.color != now_board.board[now_position.first][now_position.second].color && (&move_backups.back().peace == &pe))
@@ -56,6 +55,9 @@ bool check_move_for_pawn(const Board &now_board, const pair < int , int > &now_p
                 return false;
             }
             return false;
+        }
+        if (now_board.board[next_position.first][next_position.second].color != now_board.board[now_position.first][now_position.second].color){
+            return true;
         }
         return false;
     }
@@ -124,8 +126,8 @@ bool check_move_for_knight(const Board &now_board, const pair < int , int > &now
         return false;
     int difference_betw_first_coords = abs(now_position.first - next_position.first);
     int difference_betw_second_coords = abs(now_position.second - next_position.second);
-    if ((difference_betw_first_coords == 1 and difference_betw_second_coords == 2) or
-        (difference_betw_first_coords == 2 and difference_betw_second_coords == 1)){
+    if ((difference_betw_first_coords == 1 && difference_betw_second_coords == 2) ||
+        (difference_betw_first_coords == 2 && difference_betw_second_coords == 1)){
             return true;
         }
     return false;
@@ -197,8 +199,7 @@ bool check_if_move_is_right(const Board &board, const pair<int , int> &now_pos, 
 {
     if (now_pos == next_pos)
         return false;
-    if ((board.board[now_pos.first][now_pos.second].is_empty == true) ||
-        (board.board[next_pos.first][next_pos.second].is_empty == false)) 
+    if ((board.board[now_pos.first][now_pos.second].is_empty == true)) 
         return false;
     auto chm = [&](const function<bool(Board, pair<int,int>, pair<int,int>)>& check){
         if (check(board, now_pos, next_pos) == false) return false;
@@ -207,7 +208,11 @@ bool check_if_move_is_right(const Board &board, const pair<int , int> &now_pos, 
         board_copy.board[now_pos.first][now_pos.second] = Peace{};
         pe.were_moved = true;
         board_copy.board[next_pos.first][next_pos.second] = pe;
-        if (check_king(board, pe.color) == false) return false;
+        if (check_king(board, pe.color) == false) 
+        {
+            cout << "King will be under attack!" << endl;
+            return false;
+        }
         return true;
     };
     if (board.board[now_pos.first][now_pos.second].is_pawn) return chm(check_move_for_pawn);
@@ -219,9 +224,11 @@ bool check_if_move_is_right(const Board &board, const pair<int , int> &now_pos, 
 }
 
 bool make_move(Board &main_board){
+    print_board(main_board);
     cout << "Make a move: ";
     string get_move;
     getline(cin, get_move);
+    system("clear");
     if (get_move == "takeback") 
     {
         if (backup_boards.size() == 1)
@@ -286,10 +293,10 @@ bool make_move(Board &main_board){
             abs(next_pos.first - now_pos.first) == 1 &&
             main_board.board[next_pos.first][next_pos.second].is_empty)
         {
-            main_board.board[next_pos.first][now_pos.second] = Peace{};
+            main_board.board[next_pos.first][now_pos.second].make_empty();
         }
         move_backups.push_back({pe, now_pos, next_pos});
-        main_board.board[now_pos.first][now_pos.second] = Peace{};
+        main_board.board[now_pos.first][now_pos.second].make_empty();
         pe.were_moved = true;
         main_board.board[next_pos.first][next_pos.second] = pe;
         backup_boards.push_back(main_board);
