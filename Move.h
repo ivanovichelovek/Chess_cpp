@@ -281,6 +281,13 @@ bool make_move(Board &main_board){
     {
         cout << "Move is done!" << endl;
         Peace pe = main_board.board[now_pos.first][now_pos.second];
+        if (pe.is_pawn &&
+            abs(next_pos.second - now_pos.second) == 1 &&
+            abs(next_pos.first - now_pos.first) == 1 &&
+            main_board.board[next_pos.first][next_pos.second].is_empty)
+        {
+            main_board.board[next_pos.first][now_pos.second] = Peace{};
+        }
         move_backups.push_back({pe, now_pos, next_pos});
         main_board.board[now_pos.first][now_pos.second] = Peace{};
         pe.were_moved = true;
