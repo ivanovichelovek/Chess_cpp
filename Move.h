@@ -286,7 +286,6 @@ bool make_move(Board &main_board){
 
     if (check_if_move_is_right(main_board, now_pos, next_pos))
     {
-        cout << "Move is done!" << endl;
         Peace pe = main_board.board[now_pos.first][now_pos.second];
         if (pe.is_pawn &&
             abs(next_pos.second - now_pos.second) == 1 &&
@@ -295,11 +294,50 @@ bool make_move(Board &main_board){
         {
             main_board.board[next_pos.first][now_pos.second].make_empty();
         }
+        if (pe.is_pawn && next_pos.second == (pe.color == 1 ? 7 : 0))
+        {
+            char new_peace_type;
+            while (new_peace_type != 'B' &&
+                   new_peace_type != 'N' && 
+                   new_peace_type != 'R' && 
+                   new_peace_type != 'Q')
+            {
+                cout << "In which peace do you want to promote your pawn? (B, N, R, Q) ";
+                cin >> new_peace_type;
+                if (new_peace_type == 'B') 
+                {
+                    pe.is_pawn = false;
+                    pe.is_bishop = true;
+                    break;
+                }
+                else if (new_peace_type == 'N') 
+                {
+                    pe.is_pawn = false;
+                    pe.is_knight == true;
+                    break;
+                }
+                else if (new_peace_type == 'R') 
+                {
+                    pe.is_pawn = false;
+                    pe.is_rook = true;
+                    break;
+                }
+                else if (new_peace_type == 'Q') 
+                {
+                    pe.is_pawn = false;
+                    pe.is_queen = true;
+                    break;
+                }
+                system("clear");
+                cout << "Wrong peace format!" << endl;
+            }
+        }
         move_backups.push_back({pe, now_pos, next_pos});
         main_board.board[now_pos.first][now_pos.second].make_empty();
         pe.were_moved = true;
         main_board.board[next_pos.first][next_pos.second] = pe;
         backup_boards.push_back(main_board);
+        cout << "Move is done!" << endl;
         return true;
     }
     else
