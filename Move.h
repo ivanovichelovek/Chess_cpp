@@ -208,7 +208,7 @@ bool check_if_move_is_right(const Board &board, const pair<int , int> &now_pos, 
         board_copy.board[now_pos.first][now_pos.second] = Peace{};
         pe.were_moved = true;
         board_copy.board[next_pos.first][next_pos.second] = pe;
-        if (check_king(board, pe.color) == false) 
+        if (check_king(board_copy, pe.color) == false) 
         {
             cout << "King will be under attack!" << endl;
             return false;
@@ -337,7 +337,7 @@ bool can_move(const Board &main_board, const int& color)
                             board_copy.board[now_pos.first][now_pos.second] = Peace{};
                             pe.were_moved = true;
                             board_copy.board[next_pos.first][next_pos.second] = pe;
-                            if (check_king(main_board, pe.color) == false) return false;
+                            if (check_king(board_copy, pe.color) == false) return false;
                             return true;
                         };
                         if (main_board.board[i][j].is_pawn) if (chm(check_move_for_pawn)) return true;
